@@ -13,11 +13,11 @@
   "author": "Lucas Smith",
   "license": "MIT",
   "devDependencies": {
-    "bookshelf": "^0.13.3",
+    "bookshelf": "^0.14.2",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "knex": "^0.15.2",
     "mocha": "^5.2.0",
-    "sqlite3": "^4.0.2"
+    "sqlite3": "^4.0.6"
   }
 }
