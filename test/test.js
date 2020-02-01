@@ -1,9 +1,9 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
+
 chai.use(chaiAsPromised);
-const assert = chai.assert;
-const expect = chai.expect;
-const should = chai.should();
+const {expect, should} = chai;
+should();
 
 // Require knex and bookshelf for testing purposes.
 const config = require('../knexfile');
@@ -22,15 +22,15 @@ describe('bookshelf-dump', function() {
     });
   });
 
-  beforeEach(async function() {
+  beforeEach(async () => {
     return knex.migrate.latest();
   });
 
-  afterEach(async function() {
+  afterEach(async () => {
     return knex.migrate.rollback();
   });
 
-  after(async function() {
+  after(async () => {
     return knex.destroy();
   });
 
@@ -52,11 +52,11 @@ describe('bookshelf-dump', function() {
   it('it should error if an object isn\'t passed to it', async function() {
     const user = new TestModel();
 
-    await user.dump(['this', 'isnt', 'valid']).should.be.rejected;
-    await user.dump(null).should.be.rejected;
-    await user.dump('Something').should.be.rejected;
-    await user.dump(function() {}).should.be.rejected;
-    await user.dump({ one: 'one', two: 'two'}).should.be.fulfilled;
+    user.dump(['this', 'isnt', 'valid']).should.be.rejected;
+    user.dump(null).should.be.rejected;
+    user.dump('Something').should.be.rejected;
+    user.dump(function() {}).should.be.rejected;
+    user.dump({ one: 'one', two: 'two'}).should.be.fulfilled;
   });
 
   it.skip('it should only allow properties of the columns type to be set', function() {
