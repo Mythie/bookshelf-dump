@@ -3,6 +3,9 @@ name: Create NPM Release
 on:
   schedule:
     - cron: 0 0 * * 1
+  push:
+    branches:
+      - master
 
 jobs:
   run-tests:
@@ -20,6 +23,7 @@ jobs:
       - run: npm test
 
   create-commit:
+    needs: run-tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -37,19 +41,36 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
   create-release:
+    needs: create-commit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - run: git pull
+      - run: echo ::set-env name=TAG_NAME::$(echo "v$(jq -r ".version" package.json)")
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ env.TAG_NAME }}
+          release_name: Release ${{ env.TAG_NAME }}
           body: |
             This is an automated release to publish a new version of the NPM package
           draft: false
           prerelease: false
+
+  publish-to-npm:
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - run: npm install
+      - name: Publish NPM 
+        uses: primer/publish@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
