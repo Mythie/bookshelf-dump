@@ -26,11 +26,15 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 10.x
-      - run: npm version patch
-      - run: git add .
-      - run: git commit -m "[CRON] Increment NPM Package version"
-      - run: git tag -a "v$(jq -r ".version" package.json)" -m "Package Version $(jq -r ".version" package.json)"
-      - run: git push --follow-tags
+      - name: Commit Files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          npm version patch --git-tag-version false
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   create-release:
     runs-on: ubuntu-latest
