@@ -1,6 +1,6 @@
 {
   "name": "bookshelf-dump",
-  "version": "1.0.43",
+  "version": "1.0.44",
   "description": "![Build](https://travis-ci.org/Mythie/bookshelf-dump.svg?branch=master)",
   "main": "index.js",
   "directories": {
